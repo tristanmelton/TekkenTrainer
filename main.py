@@ -16,17 +16,15 @@ folder = './sets/kazuya_all/'
 
 is_down = False
 is_back = False
+is_forward = False
 
 blocking_low = False
 blocking_mid = False
-
-should_block_low = False
-should_block_mid = False
-    
+low_parrying = False    
 
 
 def handle_input():
-    global should_exit, is_down, is_back, blocking_mid, blocking_low
+    global should_exit, is_down, is_back, is_forward, blocking_mid, blocking_low, low_parrying
     while not should_exit:
         events = get_gamepad()
         for event in events:
@@ -34,8 +32,13 @@ def handle_input():
                 case 'ABS_HAT0X':
                     if event.state == 1:
                         is_back = True
+                        is_forward = False
+                    elif event.state == -1:
+                        is_back = False
+                        is_forward = True
                     else:
                         is_back = False
+                        is_forward = False
                 case 'ABS_HAT0Y':
                     if event.state == 1:
                         is_down = True
@@ -53,7 +56,11 @@ def handle_input():
             blocking_mid = True
         else:
             blocking_mid = False
-        print(blocking_low, blocking_mid)
+        if is_forward and is_down:
+            low_parrying = True
+        else:
+            low_parrying = False
+        print(blocking_low, blocking_mid, low_parrying)
 
 def handle_video(move_set, move_id_list):
 
@@ -83,10 +90,13 @@ def handle_video(move_set, move_id_list):
                     match hit_loc[move_stage]:
                         case 'm':
                             if blocking_mid:
-                                successes =+ 1
+                                successes += 1
                         case 'l':
                             if blocking_low:
                                 successes += 1
+                        case 'lp':
+                            if low_parrying:
+                                 successes += 1
                     move_stage += 1
                 # Display the resulting frame
                 cv2.imshow('Frame',frame)
@@ -166,7 +176,7 @@ def process_set(org_folder, video_folder):
 
 moves_proc = process_set(folder, training_set)
 
-movelist_test = list(np.random.randint(low = 0,high=2,size=5))
+movelist_test = list(np.random.randint(low = 0,high=3,size=10))
 
 
 input_thread = threading.Thread(target=handle_input)
