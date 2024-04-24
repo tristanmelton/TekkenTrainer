@@ -10,8 +10,8 @@ from inputs import get_gamepad
 
 should_exit = False
 
-training_set = '\\sets\\kazuya_all\\'
-folder = './sets/kazuya_all/'
+training_set = '\\sets\\azucena_all\\'
+folder = './sets/azucena_all/'
 
 
 is_down = False
@@ -176,7 +176,7 @@ def process_set(org_folder, video_folder):
 
 moves_proc = process_set(folder, training_set)
 
-movelist_test = list(np.random.randint(low = 0,high=3,size=10))
+movelist_test = list(np.random.randint(low = 0,high=3,size=20))
 
 
 input_thread = threading.Thread(target=handle_input)
